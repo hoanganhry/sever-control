@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: patchbuild-menu-control
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    disk:
+      name: patchbuild-control-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: CLIENT_API_TOKEN
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true

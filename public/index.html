@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>PatchBuild Control</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <main class="shell">
+      <section id="loginView" class="login-view" hidden>
+        <div class="brand-mark">PB</div>
+        <p class="eyebrow">PATCHBUILD · REMOTE CONTROL</p>
+        <h1>Đăng nhập quản trị</h1>
+        <p class="muted">Dùng mật khẩu quản trị được đặt trong Render Environment.</p>
+        <form id="loginForm" class="login-form">
+          <label for="password">Mật khẩu</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required minlength="20">
+          <button class="button primary full" type="submit">Đăng nhập <span aria-hidden="true">↗</span></button>
+          <p id="loginMessage" class="form-message" role="status"></p>
+        </form>
+      </section>
+
+      <section id="dashboardView" hidden>
+        <header class="topbar">
+          <div class="brand-lockup">
+            <div class="brand-mark small">PB</div>
+            <div>
+              <p class="eyebrow">PATCHBUILD</p>
+              <strong>Menu Control</strong>
+            </div>
+          </div>
+          <div class="top-actions">
+            <span id="connectionBadge" class="status-badge offline"><i></i><span>Chưa kết nối</span></span>
+            <button id="logoutButton" class="button ghost" type="button">Đăng xuất</button>
+          </div>
+        </header>
+
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">BẢNG ĐIỀU KHIỂN TỪ XA</p>
+            <h1>Điều chỉnh menu<br><span>từ một nơi.</span></h1>
+            <p class="muted">Cấu hình được lưu trên máy chủ. Menu nhận thay đổi khi đang chạy và tải lại cấu hình khi kết nối lại.</p>
+          </div>
+          <div class="hero-orbit" aria-hidden="true"><div class="orbit-core">A</div><span class="orbit-dot dot-a"></span><span class="orbit-dot dot-b"></span><span class="orbit-dot dot-c"></span></div>
+          <div class="hero-meta">
+            <div><span>Phiên bản cấu hình</span><strong id="revisionValue">—</strong></div>
+            <div><span>Cập nhật gần nhất</span><strong id="updatedValue">—</strong></div>
+          </div>
+        </section>
+
+        <div class="toolbar">
+          <div>
+            <p class="eyebrow">CẤU HÌNH MENU</p>
+            <h2>Các tính năng</h2>
+          </div>
+          <div class="toolbar-actions">
+            <button id="refreshButton" class="button ghost" type="button"><span aria-hidden="true">↻</span> Tải lại</button>
+            <button id="disableAllButton" class="button danger-quiet" type="button">Tắt tất cả</button>
+          </div>
+        </div>
+
+        <div id="featureGroups" class="feature-groups"></div>
+
+        <section class="settings-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">TÙY CHỈNH</p><h2>Thông số menu</h2></div>
+            <span class="section-note">Giới hạn theo menu trong game</span>
+          </div>
+          <div class="settings-grid">
+            <article class="settings-card">
+              <div class="card-title"><span class="icon-chip">◎</span><div><h3>Ngắm</h3><p>Khoảng cách và điểm ngắm</p></div></div>
+              <div class="range-field"><div><label for="aimFov">Kích cỡ FOV</label><output id="aimFovValue"></output></div><input id="aimFov" type="range" min="20" max="480" step="1"></div>
+              <div class="range-field"><div><label for="aimRange">Tầm ngắm</label><output id="aimRangeValue"></output></div><input id="aimRange" type="range" min="50" max="500" step="1"></div>
+              <div class="range-field"><div><label for="headChance">Tỉ lệ ngắm đầu</label><output id="headChanceValue"></output></div><input id="headChance" type="range" min="0" max="100" step="1"></div>
+              <div class="select-field"><label for="targetPart">Vị trí ngắm</label><select id="targetPart"><option value="0">Đầu</option><option value="1">Cổ</option><option value="2">Thân</option></select></div>
+            </article>
+            <article class="settings-card">
+              <div class="card-title"><span class="icon-chip">⌖</span><div><h3>ESP</h3><p>Khoảng cách và cách hiển thị</p></div></div>
+              <div class="range-field"><div><label for="espRange">Tầm ESP</label><output id="espRangeValue"></output></div><input id="espRange" type="range" min="30" max="500" step="1"></div>
+              <div class="select-field"><label for="lineOrigin">Vị trí đường nối</label><select id="lineOrigin"><option value="0">Dưới</option><option value="2">Trên</option></select></div>
+              <div class="select-field"><label for="healthStyle">Vị trí thanh máu</label><select id="healthStyle"><option value="0">Phía trên</option><option value="1">Phía dưới</option><option value="2">Dọc</option></select></div>
+            </article>
+            <article class="settings-card">
+              <div class="card-title"><span class="icon-chip">◌</span><div><h3>Hiển thị</h3><p>Độ rõ của vòng FOV</p></div></div>
+              <div class="range-field"><div><label for="fovOpacity">Độ đậm</label><output id="fovOpacityValue"></output></div><input id="fovOpacity" type="range" min="0.1" max="1" step="0.05"></div>
+              <div class="range-field"><div><label for="fovThickness">Độ dày</label><output id="fovThicknessValue"></output></div><input id="fovThickness" type="range" min="1" max="5" step="0.5"></div>
+              <p class="hint">Giá trị FOV tối đa còn phụ thuộc kích thước màn hình thiết bị.</p>
+            </article>
+          </div>
+        </section>
+
+        <footer class="savebar">
+          <div><span id="saveDot" class="save-dot"></span><span id="saveMessage">Đã đồng bộ</span></div>
+          <button id="saveButton" class="button primary" type="button">Lưu cấu hình <span aria-hidden="true">→</span></button>
+        </footer>
+      </section>
+      <p class="page-foot">PATCHBUILD CONTROL <span>·</span> Cấu hình chỉ áp dụng cho client đã được cấu hình kết nối.</p>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
