@@ -292,6 +292,28 @@ async function handle(req, res) {
     return sendJson(res, 200, state);
   }
 
+  if (req.method === 'PUT' && pathname === '/api/client/settings') {
+    if (!clientToken || !isClient(req)) return sendJson(res, 401, { error: 'unauthorized' });
+    lastClientSeenAt = new Date().toISOString();
+    const body = await readJson(req);
+    if (!Number.isSafeInteger(body.baseRevision) || body.baseRevision < 1) {
+      return sendJson(res, 400, { error: 'invalid_revision' });
+    }
+    if (body.baseRevision !== state.revision) {
+      return sendJson(res, 409, { ...state, error: 'revision_conflict' });
+    }
+    const settings = normalizeSettings(body.settings);
+    if (!settings) return sendJson(res, 400, { error: 'invalid_settings' });
+    const next = {
+      revision: state.revision + 1,
+      updatedAt: new Date().toISOString(),
+      settings
+    };
+    await persist(next);
+    state = next;
+    return sendJson(res, 200, state);
+  }
+
   if (req.method === 'GET' && await serveStatic(pathname, res)) return;
   return sendText(res, 404, 'Not found');
 }
